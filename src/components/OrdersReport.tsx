@@ -1,12 +1,56 @@
 "use client";
 
+import { PuffLoader } from 'react-spinners';
+import { useEffect, useState } from 'react';
 import { getJSONData } from '@/tools/Toolkit';
 import { Orders, Order } from '@/tools/orders.model';
 
-export default function OrdersReport() {
+export default function OrdersReport({setAppState, appState}:{setAppState:Function, appState:number}) {
     // retrieve server sided script
     const RETRIEVE_SCRIPT:string = "https://www.seanmorrow.ca/_lessons/retrieveOrder.php";
-  
 
-    return (<>No orders retrieved...</>);
+    // ---------------------------- private methods
+
+    const getOrders = async () => {
+        const data:Orders = await getJSONData(RETRIEVE_SCRIPT, false, true);
+        console.log(data);
+
+
+        // save it in a state variable - because it is used in JSX and needs to persist
+        setOrders(data.orders);
+
+
+        // all data retrieved. Change app state to 3
+        setAppState(3);
+    }
+
+
+    // ---------------------------- use effects
+    useEffect(() => {
+        if (appState == 2) getOrders();
+    }, [appState]);
+
+    // ---------------------------- stare variables
+    const [orders, setOrders] = useState<Order[]>([]);
+    
+  
+    if(appState == 1){
+        return (<>No orders retrieved...</>);
+    } else if (appState == 2) {
+        return (
+        <>
+            <div className="flex flex-row items-center" >
+            Loading orders...
+            <PuffLoader color={"#000000"} loading={true} size={40} />
+            </div>
+        </>
+    );
+    } else if (appState == 3) {
+        return (
+            <>
+            !!! render out orders content here !!!
+            </>
+        );
+    }
+    
 }
