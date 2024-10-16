@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { getJSONData } from '@/tools/Toolkit';
 import { Orders, Order } from '@/tools/orders.model';
 
+
 export default function OrdersReport({setAppState, appState}:{setAppState:Function, appState:number}) {
     // retrieve server sided script
     const RETRIEVE_SCRIPT:string = "https://www.seanmorrow.ca/_lessons/retrieveOrder.php";
@@ -30,8 +31,9 @@ export default function OrdersReport({setAppState, appState}:{setAppState:Functi
         if (appState == 2) getOrders();
     }, [appState]);
 
-    // ---------------------------- stare variables
+    // ---------------------------- state variables
     const [orders, setOrders] = useState<Order[]>([]);
+
     
   
     if(appState == 1){
@@ -48,7 +50,41 @@ export default function OrdersReport({setAppState, appState}:{setAppState:Functi
     } else if (appState == 3) {
         return (
             <>
-            !!! render out orders content here !!!
+                {orders.map((order) => (
+                    <div key={order.id}>
+                        <div key={order.id} className="my-3 text-accent font-bold text-xl">Order #{order.id}:</div>
+                        <div className="text-content text-sm font-bold">
+                            <i className="fas fa-info-circle"></i> Customer Information
+                        </div>
+                        <div className="mb-3 text-content text-sm">
+                            <div>{order.name}</div>
+                            <div>{order.address}</div>
+                            <div>{order.city}</div>
+                        </div>
+                        <div className="text-content text-sm font-bold">
+                            <i className="fas fa-pizza-slice"></i> Pizza Size
+                        </div>
+                        <div className="mb-3 text-content text-sm">
+                            <div>{order.size}</div>
+                        </div>
+                        <div className="text-content text-sm font-bold">
+                            <i className="fas fa-list-ul"></i> Toppings
+                        </div>
+                        <div className="mb-3 text-content text-sm">
+                            {order.toppings.map((topping) => (
+                                <div key={topping.topping}>{topping.topping}</div>
+                            ))}
+                        </div>
+                        <div className="text-content text-sm font-bold">
+                            <i className="fas fa-sticky-note"></i> Order Notes
+                        </div>
+                        <div className="mb-3 text-content text-sm">
+                            {order.notes.map((note) => (
+                                <div key={note.note}>{note.note}</div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
             </>
         );
     }
